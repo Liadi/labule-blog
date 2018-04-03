@@ -7,7 +7,7 @@
     $sql = "CREATE TABLE Users( ".
            "user_id INT NOT NULL AUTO_INCREMENT, ".
            "user_email VARCHAR(254) NOT NULL, ".
-           "user_password VARCHAR(30) NOT NULL, ".
+           "user_password VARCHAR(254) NOT NULL, ".
            "user_created_at DATE NOT NULL, ".
            "PRIMARY KEY (user_id)); ";
     
