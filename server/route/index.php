@@ -21,7 +21,7 @@ class Router {
 
     $this->app->delete('/user', "User::deleteUser");
 
-    $this->app->get('/signin', "User::getUser");
+    $this->app->post('/signin', "User::userSignin");
   }
 }
 
