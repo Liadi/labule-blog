@@ -1,5 +1,10 @@
 <?php
-require 'server/controllers/users.php';
+// use Middlewares\Users as UserMiddleware;
+//use Controllers\User as UserController;
+
+// require __DIR__.'/../middlewares/index.php';
+require __DIR__.'/../controllers/index.php';
+require __DIR__.'/../middlewares/index.php';
 
 class Router {
   private $app;
@@ -15,13 +20,15 @@ class Router {
       return "Welcome Home!";
     });
 
-    $this->app->post('/user', "User::createUser");
+    $this->app->post('/user', "Controllers\\User::createUser");
 
-    $this->app->put('/user', "User::modifyUser");
+    $this->app->put('/user', "Controllers\\User::modifyUser");
 
-    $this->app->delete('/user', "User::deleteUser");
+    $this->app->delete('/user', "Controllers\\User::deleteUser");
 
-    $this->app->post('/signin', "User::userSignin");
+    $this->app->post('/signin', "Controllers\\User::userSignin")
+    ->before("Middlewares\Main::cleanData");
+    ;
   }
 }
 

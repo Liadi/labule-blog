@@ -1,4 +1,5 @@
 <?php
+namespace Controllers;
 require __DIR__.'/../config/config.php';
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class User
     $dbuser = "root";
     $dbpass = "";
     $sql = "";
-    $conn = new mysqli($dbhost, $dbuser, $dbpass);
+    $conn = new \mysqli($dbhost, $dbuser, $dbpass);
     $retVal = false;
     if(! $conn )
     {
@@ -82,7 +83,6 @@ class User
         'message' => "authentication failed: wrong email or password",
       ), 404);
     }
-
   }
 }
 
