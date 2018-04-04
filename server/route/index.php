@@ -27,7 +27,7 @@ class Router {
     $this->app->delete('/user', "Controllers\\User::deleteUser");
 
     $this->app->post('/signin', "Controllers\\User::userSignin")
-    ->before("Middlewares\Main::cleanData");
+    ->before("Middlewares\\User::signInField");
     ;
   }
 }

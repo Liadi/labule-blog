@@ -5,19 +5,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class User
 {
-  static public function createUser(Request $request, Application $app)
+  static public function signInField(Request $request, Application $app)
   {
-    return "creating user!";
-  }
+    if(!$request->request->get('user_email')){
+      return $app->json(array(
+        'status' => FALSE,
+        'message' => 'user_email is required', 
+      ), 400);
+    }
 
-  static public function modifyUser(Request $request, Application $app)
-  {
-    return "modifying user!";
-  }
-
-  static public function deleteUser(Request $request, Application $app)
-  {
-    return "deleting user!";
+    if(!$request->request->get('user_password')){
+      return $app->json(array(
+        'status' => FALSE,
+        'message' => 'user_password is required', 
+      ), 400);
+    }
   }
 }
 
