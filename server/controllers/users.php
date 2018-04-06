@@ -31,10 +31,10 @@ class Users
     }
 
     $conn->select_db( 'LABULE_DB' );
-    $user_email = $request->get("user_email");
+    $req_email = $request->get("user_email");
     $sql = "SELECT *
             FROM users
-            WHERE user_email='{$user_email}'";
+            WHERE user_email='{$req_email}'";
 
     $result = $conn->query($sql);
     if($result) {
@@ -96,10 +96,46 @@ class Users
     }
 
     $conn->select_db( 'LABULE_DB' );
-    $sql = "INSERT INTO users (user_email, user_password)
-            VALUES ($request->request->get(user_email), $request->request->get(user_password))";
+
+    // check if email is taken
+    $req_email = $request->get('user_email');
+    $req_password = $request->get('user_password');
+    $sql = "SELECT user_email
+            FROM users
+            WHERE user_email='{$req_email}'";
+
 
     $result = $conn->query($sql);
+    if ($result) {
+      return $app->json(
+        array(
+          'status' => FALSE,
+          'message' => "account with email already in use",
+        ),
+        400
+      );
+    }
+    $sql = "INSERT INTO users (user_email, user_password)
+            VALUES ('{$req_email}', '{$req_password}')";
+
+    $result = $conn->query($sql);
+
+    if ($result) {
+      return $app->json(
+        array(
+          'status' => TRUE,
+          'message' => "user created",
+        ),
+        201
+      );
+    }
+    return $app->json(
+      array(
+        'status' => FALSE,
+        'message' => "server error", 
+      ),
+      500
+    );
   }
 }
 ?>
