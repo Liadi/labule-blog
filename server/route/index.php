@@ -1,10 +1,9 @@
 <?php
-// use Middlewares\Users as UserMiddleware;
-//use Controllers\User as UserController;
-
-// require __DIR__.'/../middlewares/index.php';
-require __DIR__.'/../controllers/index.php';
+require __DIR__.'/../controllers/users.php';
 require __DIR__.'/../middlewares/index.php';
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class Router {
   private $app;
@@ -15,19 +14,21 @@ class Router {
   }
 
   public function route()
-  { 
+  {
+
     $this->app->get('/', function() {
       return "Welcome Home!";
     });
 
-    $this->app->post('/user', "Controllers\\User::createUser");
+    $this->app->post('/user', "Controllers\\Users::create")
+    ->before("Middlewares\\Users::validateToken")
+    ->before("Middlewares\\Users::signInField")
+    ;
 
-    $this->app->put('/user', "Controllers\\User::modifyUser");
+    // $this->app->put('/user', "Controllers\\User::modifyUser");
 
-    $this->app->delete('/user', "Controllers\\User::deleteUser");
-
-    $this->app->post('/signin', "Controllers\\User::userSignin")
-    ->before("Middlewares\\User::signInField");
+    $this->app->post('/signin', "Controllers\\Users::signin")
+    ->before("Middlewares\\Users::signInField")
     ;
   }
 }
