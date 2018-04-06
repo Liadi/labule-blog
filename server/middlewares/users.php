@@ -64,6 +64,37 @@ class Users
         'message' => 'pls signin and get a token',
       ), 401);
     }
+
+    // if user with token userid doesn't exist return unauthorized
+    $dbhost = self::$config['dbhost'];
+    $dbuser = self::$config['dbuser'];
+    $dbpass = self::$config['dbpass'];
+    
+    $conn = new \mysqli($dbhost, $dbuser, $dbpass);
+    $retVal = FALSE;
+
+    if(!$conn)
+    {
+      die("Could not connect: " . mysql_error());
+    }
+
+    $conn->select_db( 'LABULE_DB' );
+    $user_id = $request->get('decodedToken')->data->user_id;
+    $sql = "SELECT user_id
+            FROM users
+            WHERE user_id='{$user_id}'";
+
+    $result = $conn->query($sql);
+    if ($result->num_rows == 0)
+    {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "unauthorized",
+        ),
+        401
+      );
+    }
   }
 
   public static function validateUserFields (Request $request, Application $app)
@@ -85,6 +116,32 @@ class Users
         array(
           "status" => FALSE,
           "message" => "invalid email address",
+        ),
+        400
+      );
+    }
+  }
+
+  public static function validatePasswordUpdate (Request $request, Application $app)
+  {
+    // both user_password and new_user_password required
+    if (!($request->get('new_user_password') && $request->get('user_password')))
+    {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "both user_password and new_user_password is required"
+        ),
+        400
+      );
+    }
+
+    // new_user_password length
+    if (strlen($request->get('new_user_password')) < 6) {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "password should have at least 6 characters",
         ),
         400
       );

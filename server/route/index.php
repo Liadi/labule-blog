@@ -31,6 +31,15 @@ class Router {
     $this->app->post('/signin', "Controllers\\Users::signin")
     ->before("Middlewares\\Users::userFields")
     ;
+
+    $this->app->post('/user/password', "Controllers\\Users::updatePassword")
+    ->before("Middlewares\\Users::validateToken")
+    ->before("Middlewares\\Users::validatePasswordUpdate")
+    ;
+
+    
+
+
   }
 }
 
