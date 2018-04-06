@@ -22,13 +22,14 @@ class Router {
 
     $this->app->post('/user', "Controllers\\Users::create")
     ->before("Middlewares\\Users::validateToken")
-    ->before("Middlewares\\Users::signInField")
+    ->before("Middlewares\\Users::userFields")
+    ->before("Middlewares\\Users::validateUserFields")
     ;
 
     // $this->app->put('/user', "Controllers\\User::modifyUser");
 
     $this->app->post('/signin', "Controllers\\Users::signin")
-    ->before("Middlewares\\Users::signInField")
+    ->before("Middlewares\\Users::userFields")
     ;
   }
 }

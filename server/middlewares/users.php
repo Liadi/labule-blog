@@ -16,8 +16,9 @@ class Users
     self::$config = $value;
   }
 
-  public static function signInField (Request $request, Application $app)
+  public static function userFields (Request $request, Application $app)
   {
+    // user_email required
     if(!$request->request->get('user_email')){
       return $app->json(array(
         'status' => FALSE,
@@ -25,6 +26,10 @@ class Users
       ), 400);
     }
 
+    //trim email
+    $request->request->set('user_email', trim($request->get('user_email'))); 
+
+    // password required
     if(!$request->request->get('user_password')){
       return $app->json(array(
         'status' => FALSE,
@@ -58,6 +63,31 @@ class Users
         'status' => FALSE,
         'message' => 'pls signin and get a token',
       ), 401);
+    }
+  }
+
+  public static function validateUserFields (Request $request, Application $app)
+  {
+    // password
+    if (strlen($request->get('user_password')) < 6) {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "password should have at least 6 characters",
+        ),
+        400
+      );
+    }
+
+    // email
+    if (!filter_var($request->get('user_email'), FILTER_VALIDATE_EMAIL)) {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "invalid email address",
+        ),
+        400
+      );
     }
   }
 }

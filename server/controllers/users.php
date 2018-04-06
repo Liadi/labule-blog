@@ -106,7 +106,8 @@ class Users
 
 
     $result = $conn->query($sql);
-    if ($result) {
+    
+    if ($result && $result->num_rows) {
       return $app->json(
         array(
           'status' => FALSE,
