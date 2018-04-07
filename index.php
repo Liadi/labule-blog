@@ -17,4 +17,5 @@ $app['debug'] = true;
 (new Router($app))->route();
 
 $app->run();
+return $app;
 ?>

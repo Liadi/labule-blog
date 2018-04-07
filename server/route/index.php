@@ -17,7 +17,12 @@ class Router {
   {
 
     $this->app->get('/', function() {
-      return "Welcome Home!";
+      return $this->app->json(
+        array(
+          "message" => "Welcome"
+        ),
+        200
+      );
     });
 
     $this->app->post('/user', "Controllers\\Users::create")
