@@ -1,4 +1,5 @@
 <?php
+namespace Application;
 require_once __DIR__.'/vendor/autoload.php';
 require __DIR__.'/server/route/index.php';
 require __DIR__.'/configure.php';
@@ -11,11 +12,24 @@ use Symfony\Component\Debug\ExceptionHandler;
 ErrorHandler::register();
 ExceptionHandler::register();
 
-$app = new Silex\Application();
-$app['debug'] = true;
+/**
+* 
+*/
+class App extends \Silex\Application
+{
+	function __construct()
+	{
+		parent::__construct();
+		(new \Router($this))->route();
+		$this->run();
+	}
+}
 
-(new Router($app))->route();
+$app = new App();
+// $app['debug'] = true;
 
-$app->run();
-return $app;
+// (new \Router($app))->route();
+
+// $app->run();
+// return $app;
 ?>
