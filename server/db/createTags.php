@@ -4,7 +4,9 @@
   $dbhost = $config['dbhost'];
   $dbuser = $config['dbuser'];
   $dbpass = $config['dbpass'];
-  
+  $dbname = $config['dbname'];
+  $up = $config['up'];
+
   $sql = "";
   $conn = new mysqli($dbhost, $dbuser, $dbpass);
   $retVal = false;
@@ -14,16 +16,16 @@
     die("Could not connect: " . mysql_error());
   }
 
-  $conn->select_db( 'LABULE_DB' );
+  $conn->select_db($dbname);
    
-  if ($argv[1] == "up") {
+  if ($up && !getenv('tear')) {
     $sql = "CREATE TABLE tags( ".
            "tag_id INT NOT NULL AUTO_INCREMENT, ".
            "tag_name VARCHAR(30) NOT NULL, ".
            "PRIMARY KEY (tag_id)); ";
     
     echo "ABOUT TO CREATE tags TABLE\n";
-  } elseif ($argv[1] == "down") {
+  } else {
     $sql = "DROP TABLE tags";
     
     echo "ABOUT TO DELETE tags TABLE\n";

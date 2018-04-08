@@ -69,6 +69,7 @@ class Users
     $dbhost = self::$config['dbhost'];
     $dbuser = self::$config['dbuser'];
     $dbpass = self::$config['dbpass'];
+    $dbname = self::$config['dbname'];
     
     $conn = new \mysqli($dbhost, $dbuser, $dbpass);
     $retVal = FALSE;
@@ -78,7 +79,7 @@ class Users
       die("Could not connect: " . mysql_error());
     }
 
-    $conn->select_db( 'LABULE_DB' );
+    $conn->select_db($dbname);
     $user_id = $request->get('decodedToken')->data->user_id;
     $sql = "SELECT user_id
             FROM users

@@ -21,6 +21,7 @@ class Users
     $dbhost = self::$config['dbhost'];
     $dbuser = self::$config['dbuser'];
     $dbpass = self::$config['dbpass'];
+    $dbname = self::$config['dbname'];
     
     $sql = "";
     $conn = new \mysqli($dbhost, $dbuser, $dbpass);
@@ -30,7 +31,7 @@ class Users
       die("Could not connect: " . mysql_error());
     }
 
-    $conn->select_db( 'LABULE_DB' );
+    $conn->select_db($dbname);
     $req_email = $request->get("user_email");
     $sql = "SELECT *
             FROM users
@@ -84,6 +85,7 @@ class Users
     $dbhost = self::$config['dbhost'];
     $dbuser = self::$config['dbuser'];
     $dbpass = self::$config['dbpass'];
+    $dbname = self::$config['dbname'];
     
     $sql = "";
     $conn = new \mysqli($dbhost, $dbuser, $dbpass);
@@ -94,7 +96,7 @@ class Users
       die("Could not connect: " . mysql_error());
     }
 
-    $conn->select_db( 'LABULE_DB' );
+    $conn->select_db($dbname);
 
     // check if email is taken
     $req_email = $request->get('user_email');
@@ -142,6 +144,7 @@ class Users
     $dbhost = self::$config['dbhost'];
     $dbuser = self::$config['dbuser'];
     $dbpass = self::$config['dbpass'];
+    $dbname = self::$config['dbname'];
     
     $sql = "";
     $conn = new \mysqli($dbhost, $dbuser, $dbpass);
@@ -152,7 +155,7 @@ class Users
       die("Could not connect: " . mysql_error());
     }
 
-    $conn->select_db( 'LABULE_DB' );
+    $conn->select_db($dbname);
 
     // extract id from token
     $req_id = $request->get('decodedToken')->data->user_id;

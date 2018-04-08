@@ -4,6 +4,8 @@
   $dbhost = $config['dbhost'];
   $dbuser = $config['dbuser'];
   $dbpass = $config['dbpass'];
+  $dbname = $config['dbname'];
+  $up = $config['up'];
   
   $sql = "";
   $conn = new mysqli($dbhost, $dbuser, $dbpass);
@@ -14,9 +16,9 @@
     die("Could not connect: " . mysql_error());
   }
 
-  $conn->select_db( 'LABULE_DB' );
+  $conn->select_db($dbname);
    
-  if ($argv[1] == "up") {
+  if ($up && !getenv('tear')) {
     $sql = "CREATE TABLE comments( ".
            "comment_id INT NOT NULL AUTO_INCREMENT, ".
            "comment_text TEXT NOT NULL, ".
@@ -28,7 +30,7 @@
            "PRIMARY KEY (comment_id)); ";
     
     echo "ABOUT TO CREATE comments TABLE\n";
-  } elseif ($argv[1] == "down") {
+  } else {
     $sql = "DROP TABLE comments";  
     echo "ABOUT TO DELETE comments TABLE\n";
   }

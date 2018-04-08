@@ -4,7 +4,9 @@
   $dbhost = $config['dbhost'];
   $dbuser = $config['dbuser'];
   $dbpass = $config['dbpass'];
-  
+  $dbname = $config['dbname'];
+  $up = $config['up'];
+
   $sql = "";
   $conn = new mysqli($dbhost, $dbuser, $dbpass);
   $retVal = false;
@@ -14,9 +16,9 @@
     die("Could not connect: " . mysql_error());
   }
 
-  $conn->select_db( 'LABULE_DB' );
+  $conn->select_db($dbname);
    
-  if ($argv[1] == "up") {
+  if ($up && !getenv('tear')) {
     $sql = "CREATE TABLE Users( ".
            "user_id INT NOT NULL AUTO_INCREMENT, ".
            "user_email VARCHAR(254) NOT NULL, ".
@@ -25,7 +27,7 @@
            "PRIMARY KEY (user_id)); ";
     
     echo "ABOUT TO CREATE Users TABLE\n";
-  } elseif ($argv[1] == "down") {
+  } else {
     $sql = "DROP TABLE Users";
     
     echo "ABOUT TO DELETE Users TABLE\n";

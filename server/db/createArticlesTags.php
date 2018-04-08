@@ -4,6 +4,8 @@
   $dbhost = $config['dbhost'];
   $dbuser = $config['dbuser'];
   $dbpass = $config['dbpass'];
+  $dbname = $config['dbname'];
+  $up = $config['up'];
   
   $sql = "";
   $conn = new mysqli($dbhost, $dbuser, $dbpass);
@@ -14,9 +16,9 @@
     die("Could not connect: " . mysql_error());
   }
 
-  $conn->select_db( 'LABULE_DB' );
+  $conn->select_db( $dbname );
 
-  if ($argv[1] == "up") {
+  if ($up && !getenv('tear')) {
     $sql = "CREATE TABLE articles_tags( ".
            "article_tag_id INT NOT NULL AUTO_INCREMENT, ".
            "article_id INT NOT NULL REFERENCES articles(article_id), ".
@@ -24,7 +26,7 @@
            "PRIMARY KEY (article_tag_id)); ";
     
     echo "ABOUT TO CREATE articles_tags TABLE\n";
-  } elseif ($argv[1] == "down") {
+  } else {
     $sql = "DROP TABLE articles_tags";
     
     echo "ABOUT TO DELETE articles_tags TABLE\n";

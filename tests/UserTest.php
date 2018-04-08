@@ -1,9 +1,30 @@
 <?php
+putenv("env=test");
 require 'index.php';
 use Silex\WebTestCase;
 
 class UserTest extends WebTestCase
 {
+  function __construct()
+  {
+    parent::__construct();
+  }
+  
+  public static function setUpBeforeClass()
+  {
+    parent::SetUpBeforeClass();
+    require 'server/db/createDB.php';
+    require 'server/db/createUsers.php';
+    require 'server/db/seedUser.php';
+  }
+
+  public static function tearDownAfterClass()
+  {
+    parent::tearDownAfterClass();
+    putenv("tear=true");
+    require 'server/db/createDB.php';
+  }
+
   public function createApplication()
   {
     $app = new Application\App;
@@ -320,28 +341,28 @@ class UserTest extends WebTestCase
   /** 
    * @depends testSignInSuccessful
    */
-  // public function testCreateUserSuccessful($token){
-  //   $client = $this->createClient();
+  public function testCreateUserSuccessful($token){
+    $client = $this->createClient();
     
-  //   $client->request(
-  //     'POST',
-  //     '/user',
-  //     array(
-  //       'user_email' => 'x@y.com',
-  //       'user_password' => 'aaaaaa'
-  //     ),
-  //     array(),
-  //     array(
-  //       'HTTP_token' => $token
-  //     )
-  //   );
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'x@y.com',
+        'user_password' => 'aaaaaa'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
     
-  //   $data = json_decode($client->getResponse()->getContent(), true);
-  //   $this->assertEquals(201, $client->getResponse()->getStatusCode());
-  //   $this->assertArrayHasKey('message', $data);
-  //   $this->assertEquals(true, $data['status']);
-  //   $this->assertEquals('user created', $data['message']);
-  // }
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(true, $data['status']);
+    $this->assertEquals('user created', $data['message']);
+  }
 
   /** 
    * @depends testSignInSuccessful
@@ -452,33 +473,33 @@ class UserTest extends WebTestCase
     $this->assertEquals('new password same as old password, use a different password', $data['message']);
   }
 
-  // /** 
-  //  * @depends testSignInSuccessful
-  //  */
-  // public function testChangePasswordSuccessful($token)
-  // {
-  //   $client = $this->createClient();
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testChangePasswordSuccessful($token)
+  {
+    $client = $this->createClient();
     
-  //   $client->request(
-  //     'POST',
-  //     '/user/password',
-  //     array(
-  //       'user_password' => 'aaaaaa',
-  //       'new_user_password' => 'aaaaab',
-  //     ),
-  //     array(),
-  //     array(
-  //       'HTTP_token' => $token
-  //     )
-  //   );
+    $client->request(
+      'POST',
+      '/user/password',
+      array(
+        'user_password' => 'aaaaaa',
+        'new_user_password' => 'aaaaab',
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
 
-  //   $data = json_decode($client->getResponse()->getContent(), true);
-  //   $this->assertEquals(200, $client->getResponse()->getStatusCode());
-  //   $this->assertArrayHasKey('status', $data);
-  //   $this->assertArrayHasKey('message', $data);    
-  //   $this->assertEquals(true, $data['status']);
-  //   $this->assertEquals('user password updated', $data['message']);
-  // }
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(200, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);    
+    $this->assertEquals(true, $data['status']);
+    $this->assertEquals('user password updated', $data['message']);
+  }
 }
 
 ?>
