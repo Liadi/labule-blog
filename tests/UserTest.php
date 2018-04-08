@@ -320,16 +320,40 @@ class UserTest extends WebTestCase
   /** 
    * @depends testSignInSuccessful
    */
-  public function testCreateUserSuccessful($token){
+  // public function testCreateUserSuccessful($token){
+  //   $client = $this->createClient();
+    
+  //   $client->request(
+  //     'POST',
+  //     '/user',
+  //     array(
+  //       'user_email' => 'x@y.com',
+  //       'user_password' => 'aaaaaa'
+  //     ),
+  //     array(),
+  //     array(
+  //       'HTTP_token' => $token
+  //     )
+  //   );
+    
+  //   $data = json_decode($client->getResponse()->getContent(), true);
+  //   $this->assertEquals(201, $client->getResponse()->getStatusCode());
+  //   $this->assertArrayHasKey('message', $data);
+  //   $this->assertEquals(true, $data['status']);
+  //   $this->assertEquals('user created', $data['message']);
+  // }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testChangePasswordWithoutFields($token)
+  {
     $client = $this->createClient();
     
     $client->request(
       'POST',
-      '/user',
-      array(
-        'user_email' => 'x@y.com',
-        'user_password' => 'aaaaaa'
-      ),
+      '/user/password',
+      array(),
       array(),
       array(
         'HTTP_token' => $token
@@ -337,11 +361,124 @@ class UserTest extends WebTestCase
     );
     
     $data = json_decode($client->getResponse()->getContent(), true);
-    $this->assertEquals(201, $client->getResponse()->getStatusCode());
-    $this->assertArrayHasKey('message', $data);
-    $this->assertEquals(true, $data['status']);
-    $this->assertEquals('user created', $data['message']);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);    
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('both user_password and new_user_password is required', $data['message']);
   }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testChangePasswordWithInvalidNewPassword($token)
+  {
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user/password',
+      array(
+        'user_password' => 'wrong password',
+        'new_user_password' => 'a',
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('password should have at least 6 characters', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testChangePasswordWithInvalidOldPassword($token)
+  {
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user/password',
+      array(
+        'user_password' => 'wrong password',
+        'new_user_password' => 'aaaaaa',
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);    
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('wrong password', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testChangePasswordWithSameOldPassword($token)
+  {
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user/password',
+      array(
+        'user_password' => 'aaaaaa',
+        'new_user_password' => 'aaaaaa',
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);    
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('new password same as old password, use a different password', $data['message']);
+  }
+
+  // /** 
+  //  * @depends testSignInSuccessful
+  //  */
+  // public function testChangePasswordSuccessful($token)
+  // {
+  //   $client = $this->createClient();
+    
+  //   $client->request(
+  //     'POST',
+  //     '/user/password',
+  //     array(
+  //       'user_password' => 'aaaaaa',
+  //       'new_user_password' => 'aaaaab',
+  //     ),
+  //     array(),
+  //     array(
+  //       'HTTP_token' => $token
+  //     )
+  //   );
+
+  //   $data = json_decode($client->getResponse()->getContent(), true);
+  //   $this->assertEquals(200, $client->getResponse()->getStatusCode());
+  //   $this->assertArrayHasKey('status', $data);
+  //   $this->assertArrayHasKey('message', $data);    
+  //   $this->assertEquals(true, $data['status']);
+  //   $this->assertEquals('user password updated', $data['message']);
+  // }
 }
 
 ?>
