@@ -99,23 +99,23 @@ class Users
 
   public static function validateUserFields (Request $request, Application $app)
   {
-    // password
-    if (strlen($request->get('user_password')) < 6) {
-      return $app->json(
-        array(
-          "status" => FALSE,
-          "message" => "password should have at least 6 characters",
-        ),
-        400
-      );
-    }
-
     // email
     if (!filter_var($request->get('user_email'), FILTER_VALIDATE_EMAIL)) {
       return $app->json(
         array(
           "status" => FALSE,
           "message" => "invalid email address",
+        ),
+        400
+      );
+    }
+    
+    // password
+    if (strlen($request->get('user_password')) < 6) {
+      return $app->json(
+        array(
+          "status" => FALSE,
+          "message" => "password should have at least 6 characters",
         ),
         400
       );

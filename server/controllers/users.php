@@ -48,14 +48,13 @@ class Users
 
       $tokenId    = base64_encode(openssl_random_pseudo_bytes(64));
       $issuedAt   = time();
-      $notBefore  = $issuedAt + 2;
+      $notBefore  = $issuedAt;
       $expire     = $notBefore + (60* 60 * 24);
 
       $secretKey = base64_decode(self::$config['jwtKey']);
       $payload = [
         'iat'  => $issuedAt,         // Issued at: time when the token was generated
         'jti'  => $tokenId,          // Json Token Id: a unique identifier for the token
-        'nbf'  => $notBefore,        // Not before
         'exp'  => $expire,           // Expire
         'data' => [                  // Data related to the signer user
           'user_id' => $pres_user['user_id'],

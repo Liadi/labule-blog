@@ -96,7 +96,7 @@ class UserTest extends WebTestCase
     $this->assertEquals('authentication failed: wrong email or password', $data['message']);
   }
 
-  public function testSignInWithUserEmailWithUserPassword()
+  public function testSignInSuccessful()
   {
     $client = $this->createClient();
     
@@ -117,6 +117,230 @@ class UserTest extends WebTestCase
     $this->assertArrayHasKey('token-auth', $data);
     $this->assertEquals(true, $data['status']);
     $this->assertEquals('user logged in', $data['message']);
+
+    return $data['token-auth'];
+  }
+
+  public function testCreateUserWithoutToken(){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user'
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('authentication token required', $data['message']);
+
+  }
+
+  public function testCreateUserWithInvalidToken(){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(),
+      array(),
+      array(
+        'HTTP_token' => 'hjdkllsl'
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(401, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('pls signin, get a token', $data['message']);
+
+  }
+  
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithValidTokenAndNoFields($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('user_email is required', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithValidTokenAndEmailField($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => ''
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('user_email is required', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithEmailWithoutPassword($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'someAddress'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('user_password is required', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithInvalidEmail($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'someAddress',
+        'user_password' => 'aa'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('invalid email address', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithInvalidPassword($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'a@b.com',
+        'user_password' => 'aa'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('password should have at least 6 characters', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserWithTakenEmail($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'a@b.com',
+        'user_password' => 'aaaaaa'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(400, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('status', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(false, $data['status']);
+    $this->assertEquals('account with email already in use', $data['message']);
+  }
+
+  /** 
+   * @depends testSignInSuccessful
+   */
+  public function testCreateUserSuccessful($token){
+    $client = $this->createClient();
+    
+    $client->request(
+      'POST',
+      '/user',
+      array(
+        'user_email' => 'x@y.com',
+        'user_password' => 'aaaaaa'
+      ),
+      array(),
+      array(
+        'HTTP_token' => $token
+      )
+    );
+    
+    $data = json_decode($client->getResponse()->getContent(), true);
+    $this->assertEquals(201, $client->getResponse()->getStatusCode());
+    $this->assertArrayHasKey('message', $data);
+    $this->assertEquals(true, $data['status']);
+    $this->assertEquals('user created', $data['message']);
   }
 }
 
