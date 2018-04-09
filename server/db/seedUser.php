@@ -17,22 +17,18 @@
   }
 
   $conn->select_db($dbname);
-   
+
+  $seed_email = 'a@b.com';
+  $seed_password = password_hash('aaaaaa', PASSWORD_DEFAULT);
   if ($up && !getenv('tear')) {
-    $sql = "CREATE TABLE images( ".
-           "image_id INT NOT NULL AUTO_INCREMENT, ".
-           "image_alt VARCHAR(50) NOT NULL, ".
-           "image_title VARCHAR(50) NOT NULL, ".
-           "image_path VARCHAR(256), ".
-           "image_order INT DEFAULT 0, ".
-           "article_id INT NOT NULL REFERENCES articles(article_id), ".
-           "PRIMARY KEY (image_id)); ";
+    $sql = "INSERT INTO users (user_email, user_password)
+            VALUES ('{$seed_email}', '{$seed_password}')";
     
-    echo "ABOUT TO CREATE images TABLE\n";
+    echo "ABOUT TO SEED USER\n";
   } else {
-    $sql = "DROP TABLE images";
-    
-    echo "ABOUT TO DELETE images TABLE\n";
+    $sql = "DROP TABLE articles";
+      
+    echo "ABOUT TO DELETE articles TABLE\n";
   }
    
   $retVal = $conn->query($sql);

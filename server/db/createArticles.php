@@ -1,9 +1,24 @@
 <?php
-  require 'config.php';
+  require __DIR__.'/../config/config.php';
 
-  $conn->select_db( 'LABULE_DB' );
+  $dbhost = $config['dbhost'];
+  $dbuser = $config['dbuser'];
+  $dbpass = $config['dbpass'];
+  $dbname = $config['dbname'];
+  $up = $config['up'];
+  
+  $sql = "";
+  $conn = new mysqli($dbhost, $dbuser, $dbpass);
+  $retVal = false;
+  
+  if(! $conn )
+  {
+    die("Could not connect: " . mysql_error());
+  }
 
-  if ($argv[1] == "up") {
+  $conn->select_db($dbname);
+
+  if ($up && !getenv('tear')) {
     $sql = "CREATE TABLE articles( ".
            "article_id INT NOT NULL AUTO_INCREMENT, ".
            "article_text TEXT NOT NULL, ".
@@ -17,7 +32,7 @@
            "PRIMARY KEY (article_id)); ";
     
     echo "ABOUT TO CREATE articles TABLE\n";
-  } elseif ($argv[1] == "down") {
+  } else {
     $sql = "DROP TABLE articles";
       
     echo "ABOUT TO DELETE articles TABLE\n";
