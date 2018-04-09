@@ -15,8 +15,13 @@ class Router {
 
   public function route()
   {
-
     $this->app->get('/', function() {
+      return $this->app->json(
+        array(), 200
+      ); // return html for client
+    });
+
+    $this->app->get('/api/v1', function() {
       return $this->app->json(
         array(
           "message" => "Welcome"
@@ -25,7 +30,7 @@ class Router {
       );
     });
 
-    $this->app->post('/user', "Controllers\\Users::create")
+    $this->app->post('/api/v1/user', "Controllers\\Users::create")
     ->before("Middlewares\\Users::validateToken")
     ->before("Middlewares\\Users::userFields")
     ->before("Middlewares\\Users::validateUserFields")
@@ -33,18 +38,14 @@ class Router {
 
     // $this->app->put('/user', "Controllers\\User::modifyUser");
 
-    $this->app->post('/signin', "Controllers\\Users::signin")
+    $this->app->post('/api/v1/signin', "Controllers\\Users::signin")
     ->before("Middlewares\\Users::userFields")
     ;
 
-    $this->app->post('/user/password', "Controllers\\Users::updatePassword")
+    $this->app->post('/api/v1/user/password', "Controllers\\Users::updatePassword")
     ->before("Middlewares\\Users::validateToken")
     ->before("Middlewares\\Users::validatePasswordUpdate")
     ;
-
-    
-
-
   }
 }
 

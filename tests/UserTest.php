@@ -37,7 +37,7 @@ class UserTest extends WebTestCase
   public function testBaseRoute()
   {
     $client = $this->createClient();
-    $client->request('GET', '/');
+    $client->request('GET', '/api/v1');
     $this->assertTrue($client->getResponse()->isOk());
     $data = json_decode($client->getResponse()->getContent(), true);
     $this->assertEquals(200, $client->getResponse()->getStatusCode());
@@ -48,7 +48,7 @@ class UserTest extends WebTestCase
   public function testSignInWithoutEmail()
   {
     $client = $this->createClient();
-    $client->request('POST', '/signin');
+    $client->request('POST', '/api/v1/signin');
     $data = json_decode($client->getResponse()->getContent(), true);
     $this->assertEquals(400, $client->getResponse()->getStatusCode());
     $this->assertArrayHasKey('status', $data);
@@ -63,7 +63,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/signin',
+      '/api/v1/signin',
       array('user_email' => 'someJargons')
     );
     
@@ -81,7 +81,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/signin',
+      '/api/v1/signin',
       array(
         'user_email' => 'someJargons',
         'user_password' => 'someJargons',
@@ -102,7 +102,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/signin',
+      '/api/v1/signin',
       array(
         'user_email' => 'a@b.com',
         'user_password' => 'someJargons',
@@ -123,7 +123,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/signin',
+      '/api/v1/signin',
       array(
         'user_email' => 'a@b.com',
         'user_password' => 'aaaaaa',
@@ -147,7 +147,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user'
+      '/api/v1/user'
     );
     
     $data = json_decode($client->getResponse()->getContent(), true);
@@ -164,7 +164,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(),
       array(),
       array(
@@ -189,7 +189,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(),
       array(),
       array(
@@ -213,7 +213,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => ''
       ),
@@ -239,7 +239,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => 'someAddress'
       ),
@@ -265,7 +265,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => 'someAddress',
         'user_password' => 'aa'
@@ -292,7 +292,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => 'a@b.com',
         'user_password' => 'aa'
@@ -319,7 +319,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => 'a@b.com',
         'user_password' => 'aaaaaa'
@@ -346,7 +346,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user',
+      '/api/v1/user',
       array(
         'user_email' => 'x@y.com',
         'user_password' => 'aaaaaa'
@@ -373,7 +373,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user/password',
+      '/api/v1/user/password',
       array(),
       array(),
       array(
@@ -398,7 +398,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user/password',
+      '/api/v1/user/password',
       array(
         'user_password' => 'wrong password',
         'new_user_password' => 'a',
@@ -426,7 +426,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user/password',
+      '/api/v1/user/password',
       array(
         'user_password' => 'wrong password',
         'new_user_password' => 'aaaaaa',
@@ -454,7 +454,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user/password',
+      '/api/v1/user/password',
       array(
         'user_password' => 'aaaaaa',
         'new_user_password' => 'aaaaaa',
@@ -482,7 +482,7 @@ class UserTest extends WebTestCase
     
     $client->request(
       'POST',
-      '/user/password',
+      '/api/v1/user/password',
       array(
         'user_password' => 'aaaaaa',
         'new_user_password' => 'aaaaab',
